@@ -9,4 +9,6 @@ router.get("/health-check", (req, res) => {
 
 router.get("/teachers", controller.getTeachers);
 
+router.post("/register", controller.registerStudents);
+
 module.exports = router;
