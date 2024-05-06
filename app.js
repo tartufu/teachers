@@ -11,8 +11,7 @@ const port = process.env.SERVER_PORT;
 app.get("/", async (req, res) => {
   try {
     const result = await db.query("SELECT version();");
-    // res.json(result.rows);
-    // res.json(result);
+
     res.status(200).send("DB IS RUNNING");
   } catch (err) {
     console.error(err);
