@@ -2,11 +2,13 @@ const express = require("express");
 const dotenv = require("dotenv");
 const db = require("./db");
 
-const routes = require("./src/routes");
+const routes = require("./src/routes/routes");
 const app = express();
 
 dotenv.config();
 const port = process.env.SERVER_PORT;
+
+app.use(express.json());
 
 app.get("/", async (req, res) => {
   try {
