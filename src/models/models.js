@@ -8,8 +8,10 @@ const getTeachersIdByEmail = (whereClause) => {
   return `SELECT id FROM teacher where email in (${whereClause})`;
 };
 
-const getCommonStudentsId = (whereClause) => {
-  return `SELECT student_id FROM students_teachers where teacher_id in (${whereClause}) GROUP BY student_id HAVING COUNT(*) > 1;`;
+const getCommonStudentsId = (whereClause, moreThanOneTeacher) => {
+  return `SELECT student_id FROM students_teachers where teacher_id in (${whereClause}) ${
+    moreThanOneTeacher ? "GROUP BY student_id HAVING COUNT(*) > 1;" : ""
+  }`;
 };
 
 const getCommonStudentsEmail = (whereClause) => {

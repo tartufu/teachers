@@ -72,7 +72,10 @@ const commonStudents = async (req, res) => {
 
   try {
     let commonStudentsId = await pool.query(
-      model.getCommonStudentsId(inClauseQueryBuilder(teacherIds)),
+      model.getCommonStudentsId(
+        inClauseQueryBuilder(teacherIds),
+        teacherIds.length > 1
+      ),
       [...teacherIds]
     );
 
