@@ -103,9 +103,10 @@ const commonStudents = async (req, res) => {
 };
 
 const suspendStudent = async (req, res) => {
-  //TODO: to write code to check that students exist and has not been suspended.
+  //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
   //TODO: Tests
+  //TODO: Refactor the messy code
   const { student } = req.body;
 
   try {
@@ -117,6 +118,9 @@ const suspendStudent = async (req, res) => {
 };
 
 const retrieveNotifications = async (req, res) => {
+  //TODO: to write code to check that students exist and has not been suspended.
+  //TODO: Error handling
+  //TODO: Tests
   const { teacher, notification } = req.body;
   let teacherId = [];
   let studentsId = [];
@@ -126,7 +130,11 @@ const retrieveNotifications = async (req, res) => {
 
   const notificationsArr = notification.split(" ");
 
-  const taggedStudents = notificationsArr.filter((word) => word[0] === "@");
+  const taggedStudents = notificationsArr
+    .filter((word) => word[0] === "@")
+    .map((word) => word.substring(1));
+
+  console.log(taggedStudents);
 
   try {
     const result = await pool.query(model.getTeacherByEmail, [teacher]);
@@ -156,13 +164,28 @@ const retrieveNotifications = async (req, res) => {
       [...studentsId]
     );
 
+    const result2 = await pool.query(
+      model.getUnsuspendedStudentsEmail(inClauseQueryBuilder(taggedStudents)),
+      [...taggedStudents]
+    );
+
+    console.log("test", result2.rows);
+
     studentNotificationsArr = result.rows.map((row) => row.email);
+    studentNotificationsArr2 = result2.rows.map((row) => row.email);
+
+    studentNotificationsArr = [
+      ...studentNotificationsArr,
+      ...studentNotificationsArr2,
+    ];
   } catch (e) {
     throw e;
   }
 
+  const set = new Set(studentNotificationsArr);
+
   const resBody = {
-    recipients: studentNotificationsArr,
+    recipients: [...set],
   };
 
   res.status(200).send(resBody);
