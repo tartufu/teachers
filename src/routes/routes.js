@@ -8,5 +8,6 @@ router.get("/health-check", (req, res) => {
 });
 
 router.post("/register", controller.registerStudents);
+router.get("/commonstudents", controller.commonStudents);
 
 module.exports = router;
