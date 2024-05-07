@@ -99,7 +99,22 @@ const commonStudents = async (req, res) => {
   res.status(200).send(commonStudentEmailsArr);
 };
 
+const suspendStudent = async (req, res) => {
+  //TODO: to write code to check that students exist and has not been suspended.
+  //TODO: Error handling
+  //TODO: Tests
+  const { student } = req.body;
+
+  try {
+    await pool.query(model.updateSuspendStudent, [student]);
+  } catch (e) {
+    throw e;
+  }
+  res.status(204).send();
+};
+
 module.exports = {
   registerStudents,
   commonStudents,
+  suspendStudent,
 };
