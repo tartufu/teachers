@@ -14,8 +14,10 @@ const getCommonStudentsId = (whereClause, moreThanOneTeacher) => {
   }`;
 };
 
-const getCommonStudentsEmail = (whereClause) => {
-  return `SELECT email, username FROM student where id in (${whereClause})`;
+const getCommonStudentsEmail = (whereClause, filterOutSuspendedStudents) => {
+  return `SELECT email, username FROM student where id in (${whereClause}) ${
+    filterOutSuspendedStudents ? "AND is_suspended=false" : ""
+  } `;
 };
 
 const updateSuspendStudent =

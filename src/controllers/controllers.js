@@ -116,8 +116,61 @@ const suspendStudent = async (req, res) => {
   res.status(204).send();
 };
 
+const retrieveNotifications = async (req, res) => {
+  const { teacher, notification } = req.body;
+  let teacherId = [];
+  let studentsId = [];
+  let studentNotificationsArr = [];
+  console.log(teacher);
+  console.log(notification);
+
+  const notificationsArr = notification.split(" ");
+
+  const taggedStudents = notificationsArr.filter((word) => word[0] === "@");
+
+  try {
+    const result = await pool.query(model.getTeacherByEmail, [teacher]);
+
+    console.log(result.rows[0].id);
+    teacherId = [result.rows[0].id];
+
+    console.log(teacherId);
+  } catch (e) {
+    throw e;
+  }
+
+  try {
+    const result = await pool.query(
+      model.getCommonStudentsId(inClauseQueryBuilder(teacherId), false),
+      [...teacherId]
+    );
+
+    studentsId = result.rows.map((row) => row.student_id);
+  } catch (e) {
+    throw e;
+  }
+
+  try {
+    const result = await pool.query(
+      model.getCommonStudentsEmail(inClauseQueryBuilder(studentsId), true),
+      [...studentsId]
+    );
+
+    studentNotificationsArr = result.rows.map((row) => row.email);
+  } catch (e) {
+    throw e;
+  }
+
+  const resBody = {
+    recipients: studentNotificationsArr,
+  };
+
+  res.status(200).send(resBody);
+};
+
 module.exports = {
   registerStudents,
   commonStudents,
   suspendStudent,
+  retrieveNotifications,
 };
