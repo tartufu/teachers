@@ -16,6 +16,9 @@ const getCommonStudentsEmail = (whereClause) => {
   return `SELECT email, username FROM student where id in (${whereClause})`;
 };
 
+const updateSuspendStudent =
+  "UPDATE student SET is_suspended=true where email=$1";
+
 const postToStudentsTeachersTable =
   "INSERT INTO students_teachers (teacher_id, student_id) VALUES ($1, $2)";
 
@@ -26,4 +29,5 @@ module.exports = {
   getCommonStudentsId,
   postToStudentsTeachersTable,
   getCommonStudentsEmail,
+  updateSuspendStudent,
 };

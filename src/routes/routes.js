@@ -9,5 +9,6 @@ router.get("/health-check", (req, res) => {
 
 router.post("/register", controller.registerStudents);
 router.get("/commonstudents", controller.commonStudents);
+router.post("/suspend", controller.suspendStudent);
 
 module.exports = router;
