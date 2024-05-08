@@ -2,7 +2,7 @@
 
 const getTeacherByEmail = "SELECT id FROM teacher WHERE email = $1";
 
-const getStudentsByEmailBuilder = (whereClause) => {
+const getStudentsByEmail = (whereClause) => {
   return `SELECT id FROM student where email in (${whereClause})`;
 };
 
@@ -37,7 +37,7 @@ const postToStudentsTeachersTable =
 module.exports = {
   getTeacherByEmail,
   getTeachersIdByEmail,
-  getStudentsByEmailBuilder,
+  getStudentsByEmail,
   getCommonStudentsId,
   postToStudentsTeachersTable,
   getCommonStudentsEmail,

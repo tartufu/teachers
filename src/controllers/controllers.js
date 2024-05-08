@@ -16,23 +16,29 @@ const registerStudents = async (req, res) => {
 
   try {
     const result = await pool.query(model.getTeacherByEmail, [teacher]);
+    if (result.rows.length === 0)
+      throw new Error("Unable to find record of Teacher!");
     teacherid = result.rows[0].id;
   } catch (e) {
-    throw e;
+    return res.status(400).send(e.message);
   }
 
   try {
     const result = await pool.query(
-      model.getStudentsByEmailBuilder(inClauseQueryBuilder(students)),
+      model.getStudentsByEmail(inClauseQueryBuilder(students)),
       [...students]
     );
 
+    if (result.rows.length !== students.length)
+      throw new Error("1 or more students do not exist, please check again!");
+
     studentIds = result.rows.map((row) => row.id);
   } catch (e) {
-    throw e;
+    return res.status(400).send(e.message);
   }
 
   try {
+    // need to check if has already been registered
     studentIds.map(async (studentId) => {
       await pool.query(model.postToStudentsTeachersTable, [
         teacherid,

@@ -1,5 +1,5 @@
 const {
-  getStudentsByEmailBuilder,
+  getStudentsByEmail,
   getTeachersIdByEmail,
   getCommonStudentsId,
   getCommonStudentsEmail,
@@ -8,7 +8,7 @@ const {
 
 describe("#getStudentsByEmailBuilder", () => {
   test("should return SQL string with where in clause ", () => {
-    expect(getStudentsByEmailBuilder("$1, $2, $3")).toBe(
+    expect(getStudentsByEmail("$1, $2, $3")).toBe(
       "SELECT id FROM student where email in ($1, $2, $3)"
     );
   });
