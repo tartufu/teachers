@@ -127,7 +127,7 @@ const commonStudents = async (req, res, next) => {
   res.status(200).send(commonStudentEmailsArr);
 };
 
-const suspendStudent = async (req, res) => {
+const suspendStudent = async (req, res, next) => {
   //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
   //TODO: Tests
@@ -137,8 +137,9 @@ const suspendStudent = async (req, res) => {
   try {
     await pool.query(model.updateSuspendStudent, [student]);
   } catch (e) {
-    throw e;
+    return next(e);
   }
+
   res.status(204).send();
 };
 

@@ -67,3 +67,25 @@ describe("#common students", () => {
     expect(JSON.parse(response.text)).toEqual(["one@mail.com", "two@mail.com"]);
   });
 });
+
+describe("#suspend student", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+  test("returns 204 code on sucessful call", async () => {
+    const suspendStudentSpy = jest.spyOn(pool, "query").mockResolvedValue();
+    const response = await request(app).post("/api/suspend");
+    expect(response.status).toBe(204);
+    expect(response.text).toBeFalsy();
+  });
+
+  test("returns 500 code on failed call", async () => {
+    const suspendStudentSpy = jest
+      .spyOn(pool, "query")
+      .mockRejectedValue(new Error());
+
+    const response = await request(app).post("/api/suspend");
+    expect(response.status).toBe(500);
+    expect(response.error.text).toBe("Something went wrong");
+  });
+});
