@@ -2,7 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const db = require("./db");
 
-const routes = require("./src/routes/routes");
+const apiRoutes = require("./src/routes/apiRoutes");
+const route404 = require("./src/routes/404routes");
 const app = express();
 
 const errorHandler = require("./src/middleware/errorHandler");
@@ -23,8 +24,9 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.use("/api", routes);
-app.use(errorHandler);
+app.use("/api", apiRoutes, errorHandler);
+
+app.use("/*", route404, errorHandler); // Generic 404 handler
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
