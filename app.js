@@ -5,6 +5,8 @@ const db = require("./db");
 const routes = require("./src/routes/routes");
 const app = express();
 
+const errorHandler = require("./src/middleware/errorHandler");
+
 dotenv.config();
 const port = process.env.SERVER_PORT;
 
@@ -22,6 +24,7 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/api", routes);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

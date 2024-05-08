@@ -1,4 +1,4 @@
-const { inClauseQueryBuilder } = require("./utils");
+const { inClauseQueryBuilder, errorMessageBuilder } = require("./utils");
 
 describe("#inClauseQueryBuilder", () => {
   test("should return empty string on empty array", () => {
@@ -11,5 +11,23 @@ describe("#inClauseQueryBuilder", () => {
 
   test("should throw error if parms is not array", () => {
     expect(() => inClauseQueryBuilder("")).toThrow();
+  });
+});
+
+describe("#errorMessageBuilder", () => {
+  test("should return object and 400 status code if 3rd params not provided", () => {
+    expect(errorMessageBuilder("123", "456")).toEqual({
+      type: "123",
+      message: "456",
+      statusCode: 400,
+    });
+  });
+
+  test("should return object on provided params", () => {
+    expect(errorMessageBuilder("463", "287", 401)).toEqual({
+      type: "463",
+      message: "287",
+      statusCode: 401,
+    });
   });
 });

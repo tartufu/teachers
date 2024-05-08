@@ -2,9 +2,11 @@ const pool = require("../../db");
 
 const model = require("../models/models");
 
-const { inClauseQueryBuilder } = require("../utils/utils");
+const { inClauseQueryBuilder, errorMessageBuilder } = require("../utils/utils");
 
-const registerStudents = async (req, res) => {
+const { errorType, errorMsg } = require("../utils/consts");
+
+const registerStudents = async (req, res, next) => {
   //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
   //TODO: Tests
@@ -16,11 +18,15 @@ const registerStudents = async (req, res) => {
 
   try {
     const result = await pool.query(model.getTeacherByEmail, [teacher]);
-    if (result.rows.length === 0)
-      throw new Error("Unable to find record of Teacher!");
+    if (!result.rows.length) {
+      throw errorMessageBuilder(
+        errorType.MISSING_RECORD,
+        errorMsg.MISSING_TEACHER
+      );
+    }
     teacherid = result.rows[0].id;
   } catch (e) {
-    return res.status(400).send(e.message);
+    return next(e);
   }
 
   try {
@@ -29,12 +35,16 @@ const registerStudents = async (req, res) => {
       [...students]
     );
 
-    if (result.rows.length !== students.length)
-      throw new Error("1 or more students do not exist, please check again!");
+    if (result.rows.length !== students.length) {
+      throw errorMessageBuilder(
+        errorType.MISSING_RECORD,
+        errorMsg.MISSING_STUDENT
+      );
+    }
 
     studentIds = result.rows.map((row) => row.id);
   } catch (e) {
-    return res.status(400).send(e.message);
+    return next(e);
   }
 
   try {
@@ -46,7 +56,7 @@ const registerStudents = async (req, res) => {
       ]);
     });
   } catch (e) {
-    throw e;
+    return next(e);
   }
 
   res.status(204).send();
@@ -69,14 +79,18 @@ const commonStudents = async (req, res, next) => {
       [...teacherEmails]
     );
 
-    if (result.rows.length === 0)
-      throw new Error("Unable to find record of Teacher(s)!");
+    if (!result.rows.length) {
+      throw errorMessageBuilder(
+        errorType.MISSING_RECORD,
+        errorMsg.MISSING_TEACHER
+      );
+    }
 
     teacherIds = result.rows.map((row) => row.id);
 
     console.log(teacherIds);
   } catch (e) {
-    return res.status(400).send(e.message);
+    return next(e);
   }
 
   try {
