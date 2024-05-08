@@ -28,6 +28,10 @@ app.use("/api", apiRoutes, errorHandler);
 
 app.use("/*", route404, errorHandler); // Generic 404 handler
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+}
+
+module.exports = app;
