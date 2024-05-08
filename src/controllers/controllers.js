@@ -79,6 +79,8 @@ const commonStudents = async (req, res, next) => {
       [...teacherEmails]
     );
 
+    console.log(123123123, result.rows);
+
     if (!result.rows.length) {
       throw errorMessageBuilder(
         errorType.MISSING_RECORD,
