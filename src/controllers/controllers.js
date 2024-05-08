@@ -46,7 +46,7 @@ const registerStudents = async (req, res) => {
   res.status(204).send();
 };
 
-const commonStudents = async (req, res) => {
+const commonStudents = async (req, res, next) => {
   //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
   //TODO: Tests
@@ -63,11 +63,14 @@ const commonStudents = async (req, res) => {
       [...teacherEmails]
     );
 
+    if (result.rows.length === 0)
+      throw new Error("Unable to find record of Teacher(s)!");
+
     teacherIds = result.rows.map((row) => row.id);
 
     console.log(teacherIds);
   } catch (e) {
-    throw e;
+    return res.status(400).send(e.message);
   }
 
   try {
