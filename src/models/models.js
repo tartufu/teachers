@@ -11,8 +11,8 @@ const getTeachersIdByEmail = (whereClause) => {
 };
 
 const getCommonStudentsId = (whereClause, moreThanOneTeacher = false) => {
-  return `SELECT student_id FROM students_teachers where teacher_id in (${whereClause}) ${
-    moreThanOneTeacher ? "GROUP BY student_id HAVING COUNT(*) > 1;" : ""
+  return `SELECT student_id FROM students_teachers where teacher_id in (${whereClause})${
+    moreThanOneTeacher ? " GROUP BY student_id HAVING COUNT(*) > 1;" : ""
   }`;
 };
 
@@ -20,9 +20,9 @@ const getCommonStudentsEmail = (
   whereClause,
   filterOutSuspendedStudents = false
 ) => {
-  return `SELECT email, username FROM student where id in (${whereClause}) ${
-    filterOutSuspendedStudents ? "AND is_suspended=false" : ""
-  } `;
+  return `SELECT email, username FROM student where id in (${whereClause})${
+    filterOutSuspendedStudents ? " AND is_suspended=false" : ""
+  }`;
 };
 
 const getUnsuspendedStudentsEmail = (whereClause) =>
