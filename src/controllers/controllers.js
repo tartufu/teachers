@@ -111,7 +111,7 @@ const commonStudents = async (req, res, next) => {
       (student) => student.email
     );
   } catch (e) {
-    throw e;
+    return next(e);
   }
 
   res.status(200).send(commonStudentEmailsArr);
@@ -160,7 +160,7 @@ const retrieveNotifications = async (req, res) => {
 
     console.log(teacherId);
   } catch (e) {
-    throw e;
+    return next(e);
   }
 
   try {
@@ -171,7 +171,7 @@ const retrieveNotifications = async (req, res) => {
 
     studentsId = result.rows.map((row) => row.student_id);
   } catch (e) {
-    throw e;
+    return next(e);
   }
 
   try {
@@ -195,7 +195,7 @@ const retrieveNotifications = async (req, res) => {
       ...studentNotificationsArr2,
     ];
   } catch (e) {
-    throw e;
+    return next(e);
   }
 
   const set = new Set(studentNotificationsArr);
