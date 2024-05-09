@@ -79,8 +79,6 @@ const commonStudents = async (req, res, next) => {
       [...teacherEmails]
     );
 
-    console.log(123123123, result.rows);
-
     if (!result.rows.length) {
       throw errorMessageBuilder(
         errorType.MISSING_RECORD,
@@ -89,8 +87,6 @@ const commonStudents = async (req, res, next) => {
     }
 
     teacherIds = result.rows.map((row) => row.id);
-
-    console.log(teacherIds);
   } catch (e) {
     return next(e);
   }
@@ -104,18 +100,12 @@ const commonStudents = async (req, res, next) => {
       [...teacherIds]
     );
 
-    console.log(commonStudentsId.rows);
-
     commonStudentsId = commonStudentsId.rows.map((row) => row.student_id);
-
-    console.log([...commonStudentsId]);
 
     const commonStudentsEmail = await pool.query(
       model.getCommonStudentsEmail(inClauseQueryBuilder(commonStudentsId)),
       [...commonStudentsId]
     );
-
-    console.log(commonStudentsEmail.rows);
 
     commonStudentEmailsArr = commonStudentsEmail.rows.map(
       (student) => student.email

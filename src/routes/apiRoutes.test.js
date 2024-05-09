@@ -89,3 +89,71 @@ describe("#suspend student", () => {
     expect(response.error.text).toBe("Something went wrong");
   });
 });
+
+describe("#register student", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+  test("returns 400 code if teacher not found", async () => {
+    const getTeacherEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValue({ rows: [] });
+    const response = await request(app).post("/api/register");
+    expect(response.status).toBe(400);
+    expect(response.error.text).toBe("UNABLE TO FIND RECORD OF TEACHER!");
+  });
+
+  test("returns 400 code if students not found", async () => {
+    const getTeacherEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 12345678 }] });
+
+    const getStudentEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [] });
+
+    const response = await request(app)
+      .post("/api/register")
+      .send({ students: ["studentSeen@mail.com", "studentFive@mail.com"] });
+    expect(response.status).toBe(400);
+    expect(response.error.text).toBe(
+      "ONE OR MORE STUDENTS DO NOT EXIST, PLEASE TRY AGAIN!"
+    );
+  });
+
+  test("returns 400 code if students length not match returned records", async () => {
+    const getTeacherEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 12345678 }] });
+
+    const getStudentEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 5566677 }] });
+
+    const response = await request(app)
+      .post("/api/register")
+      .send({ students: ["studentSeen@mail.com", "studentFive@mail.com"] });
+    expect(response.status).toBe(400);
+    expect(response.error.text).toBe(
+      "ONE OR MORE STUDENTS DO NOT EXIST, PLEASE TRY AGAIN!"
+    );
+  });
+
+  test("returns 204 code if successfully posted", async () => {
+    const getTeacherEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 12345678 }] });
+
+    const getStudentEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 5566677 }, { id: 444433333 }] });
+
+    const postStudentsSpy = jest.spyOn(pool, "query").mockResolvedValue(2);
+
+    const response = await request(app)
+      .post("/api/register")
+      .send({ students: ["studentSeen@mail.com", "studentFive@mail.com"] });
+    expect(response.status).toBe(204);
+    expect(response.text).toBeFalsy();
+  });
+});
