@@ -3,7 +3,7 @@ const teacherTable = "teacher";
 
 const teacherData = [
   { username: "teacherOne", email: "teacherOne@mail.com" },
-  { username: "teacherOne", email: "teacherTwo@mail.com" },
+  { username: "teacherTwo", email: "teacherTwo@mail.com" },
   { username: "teacherThree", email: "teacherThree@mail.com" },
   { username: "teacherFour", email: "teacherFour@mail.com" },
   { username: "teacherFive", email: "teacherFive@mail.com" },
