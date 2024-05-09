@@ -9,7 +9,6 @@ const { errorType, errorMsg } = require("../utils/consts");
 const registerStudents = async (req, res, next) => {
   //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
-  //TODO: Tests
 
   const { teacher, students } = req.body;
 
@@ -120,8 +119,6 @@ const commonStudents = async (req, res, next) => {
 const suspendStudent = async (req, res, next) => {
   //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
-  //TODO: Tests
-  //TODO: Refactor the messy code
   const { student } = req.body;
 
   try {
@@ -133,16 +130,13 @@ const suspendStudent = async (req, res, next) => {
   res.status(204).send();
 };
 
-const retrieveNotifications = async (req, res) => {
-  //TODO: to write code to check that students exist and has not been suspended.
+const retrieveNotifications = async (req, res, next) => {
   //TODO: Error handling
   //TODO: Tests
-  const { teacher, notification } = req.body;
+  const { teacher = "", notification = "" } = req.body;
   let teacherId = [];
   let studentsId = [];
   let studentNotificationsArr = [];
-  console.log(teacher);
-  console.log(notification);
 
   const notificationsArr = notification.split(" ");
 
@@ -150,15 +144,17 @@ const retrieveNotifications = async (req, res) => {
     .filter((word) => word[0] === "@")
     .map((word) => word.substring(1));
 
-  console.log(taggedStudents);
-
   try {
     const result = await pool.query(model.getTeacherByEmail, [teacher]);
 
-    console.log(result.rows[0].id);
-    teacherId = [result.rows[0].id];
+    if (!result.rows.length) {
+      throw errorMessageBuilder(
+        errorType.MISSING_RECORD,
+        errorMsg.MISSING_TEACHER
+      );
+    }
 
-    console.log(teacherId);
+    teacherId = [result.rows[0].id];
   } catch (e) {
     return next(e);
   }
@@ -175,24 +171,26 @@ const retrieveNotifications = async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
+    const teacherCommonStudents = await pool.query(
       model.getCommonStudentsEmail(inClauseQueryBuilder(studentsId), true),
       [...studentsId]
     );
 
-    const result2 = await pool.query(
+    const unSuspendedTaggedStudents = await pool.query(
       model.getUnsuspendedStudentsEmail(inClauseQueryBuilder(taggedStudents)),
       [...taggedStudents]
     );
 
-    console.log("test", result2.rows);
-
-    studentNotificationsArr = result.rows.map((row) => row.email);
-    studentNotificationsArr2 = result2.rows.map((row) => row.email);
+    const teacherCommonStudentsArr = teacherCommonStudents.rows.map(
+      (row) => row.email
+    );
+    const unSuspendedTaggedStudentsArr = unSuspendedTaggedStudents.rows.map(
+      (row) => row.email
+    );
 
     studentNotificationsArr = [
-      ...studentNotificationsArr,
-      ...studentNotificationsArr2,
+      ...teacherCommonStudentsArr,
+      ...unSuspendedTaggedStudentsArr,
     ];
   } catch (e) {
     return next(e);

@@ -157,3 +157,67 @@ describe("#register student", () => {
     expect(response.text).toBeFalsy();
   });
 });
+
+describe("#retrievefornotifications", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+  test("returns 400 code if unable to find teacher", async () => {
+    const getTeacherEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [] });
+    const response = await request(app)
+      .post("/api/retrievefornotifications")
+      .send({
+        teacher: "teacherUnknown@mail.com",
+        notification:
+          "Hello students! @studentTwo@mail.com @studentTen@mail.com",
+      });
+    expect(response.status).toBe(400);
+    expect(response.text).toBe("UNABLE TO FIND RECORD OF TEACHER!");
+  });
+
+  test("returns 200 code on successful call with no duplicated student emails", async () => {
+    const getTeacherEmailsSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 1111111 }] });
+
+    const getCommonStudentsIdSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({ rows: [{ id: 222222222 }] });
+
+    const getCommonStudentsEmailSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({
+        rows: [
+          { email: "studentOne@mail.com" },
+          { email: "studentTwo@mail.com" },
+        ],
+      });
+
+    const getUnsuspendedStudentsEmaillSpy = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({
+        rows: [
+          { email: "studentTwo@mail.com" },
+          { email: "studentTen@mail.com" },
+        ],
+      });
+
+    const response = await request(app)
+      .post("/api/retrievefornotifications")
+      .send({
+        teacher: "teacherUnknown@mail.com",
+        notification:
+          "Hello students! @studentTwo@mail.com @studentTen@mail.com",
+      });
+    expect(response.status).toBe(200);
+    expect(JSON.parse(response.text)).toEqual({
+      recipients: [
+        "studentOne@mail.com",
+        "studentTwo@mail.com",
+        "studentTen@mail.com",
+      ],
+    });
+  });
+});
