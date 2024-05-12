@@ -41,3 +41,7 @@ supertest: library for writing unit tests for https <br />
 - src/controllers stores business logic pertaining to the user stories <br />
 - src/models stores the SQL queries that call DB. <br />
 - src/middleware stores the middlware that should be called before/after controller actions. <br />
+
+## Api Hosted
+
+https://reasonable-nicol-tartufu-0b211aaf.koyeb.app/ <br />
