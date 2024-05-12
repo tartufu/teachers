@@ -8,6 +8,10 @@ module.exports = {
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    ssl: {
+      // Enable SSL mode and set the SSL mode option
+      rejectUnauthorized: false, // You may need to set this to true in production
+    },
   },
   migrations: {
     tableName: "knex_migrations",
