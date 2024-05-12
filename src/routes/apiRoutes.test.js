@@ -35,10 +35,6 @@ describe("#common students", () => {
       .spyOn(pool, "query")
       .mockResolvedValueOnce({ rows: [] });
 
-    const commonStudentsEmailSpy = jest
-      .spyOn(pool, "query")
-      .mockResolvedValueOnce({ rows: [] });
-
     const response = await request(app).get("/api/commonstudents");
     expect(response.status).toBe(200);
     expect(JSON.parse(response.text)).toEqual([]);

@@ -85,14 +85,10 @@ const commonStudents = async (req, res, next) => {
       );
     }
 
-    console.log(12123);
-
     teacherIds = result.rows.map((row) => row.id);
   } catch (e) {
     return next(e);
   }
-
-  console.log(222222, teacherIds);
 
   try {
     let commonStudentsId = await pool.query(
