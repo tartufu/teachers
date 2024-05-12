@@ -30,7 +30,7 @@ app.use("/*", route404, errorHandler); // Generic 404 handler
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Teacher app listening on port ${port}`);
   });
 }
 
