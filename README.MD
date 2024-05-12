@@ -20,7 +20,8 @@ DB_NAME, set to your postgres database name. <br />
 Create DB named School <br />
 Run this command in postgres: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; to allow tables to use UUID. <br />
 Run migration scripts to generate tables and pre-populate data. <br />
-npm knex migrate:latest <br />
+npx knex migrate:list => To check there are pending migrations
+npx knex migrate:latest <br />
 
 ### Dependencies
 
