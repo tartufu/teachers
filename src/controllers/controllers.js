@@ -85,10 +85,14 @@ const commonStudents = async (req, res, next) => {
       );
     }
 
+    console.log(12123);
+
     teacherIds = result.rows.map((row) => row.id);
   } catch (e) {
     return next(e);
   }
+
+  console.log(222222, teacherIds);
 
   try {
     let commonStudentsId = await pool.query(
@@ -99,16 +103,18 @@ const commonStudents = async (req, res, next) => {
       [...teacherIds]
     );
 
-    commonStudentsId = commonStudentsId.rows.map((row) => row.student_id);
+    if (commonStudentsId.rows.length) {
+      commonStudentsId = commonStudentsId.rows.map((row) => row.student_id);
 
-    const commonStudentsEmail = await pool.query(
-      model.getCommonStudentsEmail(inClauseQueryBuilder(commonStudentsId)),
-      [...commonStudentsId]
-    );
+      const commonStudentsEmail = await pool.query(
+        model.getCommonStudentsEmail(inClauseQueryBuilder(commonStudentsId)),
+        [...commonStudentsId]
+      );
 
-    commonStudentEmailsArr = commonStudentsEmail.rows.map(
-      (student) => student.email
-    );
+      commonStudentEmailsArr = commonStudentsEmail.rows.map(
+        (student) => student.email
+      );
+    }
   } catch (e) {
     return next(e);
   }
