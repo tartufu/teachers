@@ -9,6 +9,7 @@ create .env file in root folder. <br />
 ### Env Vars Explanation
 
 SERVER_PORT: Set to a local port, usually 8000 <br />
+ENV: Set to DEV <br />
 DB_USERNAME, set to your postgres admin username <br />
 DB_PASSWORD, set to your postgres admin password <br />
 DB_HOST=localhost <br />
