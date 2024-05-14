@@ -34,6 +34,16 @@ const updateSuspendStudent =
 const postToStudentsTeachersTable =
   "INSERT INTO students_teachers (teacher_id, student_id) VALUES ($1, $2)";
 
+const getCommonStudents = (whereClause, moreThanOneTeacher = false) => {
+  return `
+  SELECT student.email FROM student WHERE ID IN (
+    SELECT student_id FROM teacher t1 
+    JOIN students_teachers t2 ON t1.id=t2.teacher_id
+    WHERE t1.email IN (${whereClause})
+    ${moreThanOneTeacher ? "GROUP BY student_id HAVING COUNT(*) > 1" : ""}
+  );`;
+};
+
 module.exports = {
   getTeacherByEmail,
   getTeachersIdByEmail,
@@ -43,4 +53,5 @@ module.exports = {
   getCommonStudentsEmail,
   updateSuspendStudent,
   getUnsuspendedStudentsEmail,
+  getCommonStudents,
 };

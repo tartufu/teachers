@@ -65,7 +65,6 @@ const commonStudents = async (req, res, next) => {
   //TODO: to write code to check that students/teachers exist. Ensure no dupliacate records when writing to table
   //TODO: Error handling
   //TODO: Tests
-  let teacherIds = [];
   let commonStudentEmailsArr = [];
   const teachers = req.query.teacher;
   let teacherEmails = Array.isArray(teachers)
@@ -74,44 +73,18 @@ const commonStudents = async (req, res, next) => {
 
   try {
     const result = await pool.query(
-      model.getTeachersIdByEmail(inClauseQueryBuilder(teacherEmails)),
+      model.getCommonStudents(
+        inClauseQueryBuilder(teacherEmails),
+        teacherEmails.length > 1
+      ),
       [...teacherEmails]
     );
 
-    if (!result.rows.length) {
-      throw errorMessageBuilder(
-        errorType.MISSING_RECORD,
-        errorMsg.MISSING_TEACHER
-      );
-    }
-
-    teacherIds = result.rows.map((row) => row.id);
-  } catch (e) {
-    return next(e);
-  }
-
-  try {
-    let commonStudentsId = await pool.query(
-      model.getCommonStudentsId(
-        inClauseQueryBuilder(teacherIds),
-        teacherIds.length > 1
-      ),
-      [...teacherIds]
-    );
-
-    if (commonStudentsId.rows.length) {
-      commonStudentsId = commonStudentsId.rows.map((row) => row.student_id);
-
-      const commonStudentsEmail = await pool.query(
-        model.getCommonStudentsEmail(inClauseQueryBuilder(commonStudentsId)),
-        [...commonStudentsId]
-      );
-
-      commonStudentEmailsArr = commonStudentsEmail.rows.map(
-        (student) => student.email
-      );
+    if (result.rows.length > 0) {
+      commonStudentEmailsArr = result.rows.map((row) => row.email);
     }
   } catch (e) {
+    console.log(e);
     return next(e);
   }
 
